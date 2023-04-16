@@ -8,6 +8,7 @@ FROM golang:1.20.3-bullseye@sha256:595c9af0430dd84bad33020e7e9e328af4bd1a1aabd46
 
 FROM golang-base as golang-control-plane-builder
 ARG GO_RESOURCE=resource.go
+ENV GOPROXY=https://goproxy.cn,direct
 RUN git clone https://github.com/envoyproxy/go-control-plane && cd go-control-plane && git checkout b4adc3bb5fe5288bff01cd452dad418ef98c676e
 ADD "$GO_RESOURCE" /go/go-control-plane/internal/example/resource.go
 RUN cd go-control-plane && make bin/example
@@ -16,6 +17,7 @@ WORKDIR /go/go-control-plane
 
 FROM os-base as golang-control-plane
 ENV DEBIAN_FRONTEND=noninteractive
+ENV GOPROXY=https://goproxy.cn,direct
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     apt-get -qq update \
